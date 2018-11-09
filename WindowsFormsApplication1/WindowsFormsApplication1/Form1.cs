@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,17 +17,51 @@ namespace WindowsFormsApplication1
         {
             InitializeComponent();
         }
-
+        Thread mainThread;
         private void Form1_Load(object sender, EventArgs e)
         {
+            mainThread = new Thread(() =>
+            {
+               // while (true)
+                {
+
+                    this.Invoke(new Action(()=> { this.timer1.Enabled = true; }));
+                    Thread.Sleep(100);
+                    //ShowText(this.richTextBox1, "hahahhahahha\r\n");
+                    this.Invoke(new Action<RichTextBox,string>((RichTextBox rtb, string str)=> { rtb.Text += str; }),new object[] { this.richTextBox1,"hahahahha\r\n"});
+                    //TextBox tb = new TextBox();
+                    //tb.Text = "sdsfsdf";
+                    //this.Controls.Add(tb);
+                    this.Invoke(new Action(()=> {
+                        TextBox tb = new TextBox();
+                        tb.Text = "sdsfsdf";
+                        this.Controls.Add(tb);
+                    }));
+                }
+            });
+            mainThread.Start();
             this.timer1.Enabled = true;
         }
 
+        delegate void ShowTextDelegate(RichTextBox rtb, string str);
+        public void ShowText(RichTextBox rtb, string str)
+        {
+            ShowTextDelegate std = new ShowTextDelegate(ShowText);
+            if (rtb.InvokeRequired)
+            {
+                rtb.Invoke(std, new object[] { rtb, str });
+            }
+            else
+            {
+                rtb.Text += str;
+            }
+        }
         private void timer1_Tick(object sender, EventArgs e)
         {
             this.richTextBox1.Text += "Hello World\r\n";
             this.richTextBox1.SelectionStart = this.richTextBox1.TextLength;
             this.richTextBox1.ScrollToCaret();
+            this.timer1.Stop();
         }
     }
 }
