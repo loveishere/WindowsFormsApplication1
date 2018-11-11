@@ -31,10 +31,10 @@ namespace WindowsFormsApplication1
 
                     this.Invoke(new Action(()=> { this.timer1.Enabled = true; }));
                     Thread.Sleep(100);
-                    this.Invoke(new Action<RichTextBox,string>((RichTextBox rtb, string str)=> { rtb.Text += str; }),new object[] { this.richTextBox1,"hahahahha\r\n"});
+                    this.Invoke(new Action<RichTextBox,string>((RichTextBox rtb, string str)=> { rtb.Text += str; }),new object[] { this.richTextBox1,"11111111111\r\n"});
                     this.Invoke(new Action(()=> {
                         TextBox tb = new TextBox();
-                        tb.Text = "sdsfsdf";
+                        tb.Text = "111111111111";
                         this.Controls.Add(tb);
                     }));
                 }
