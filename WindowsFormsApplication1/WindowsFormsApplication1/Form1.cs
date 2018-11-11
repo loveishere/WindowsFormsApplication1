@@ -11,27 +11,27 @@ using System.Windows.Forms;
 
 namespace WindowsFormsApplication1
 {
-    public partial class Form1 : Form
+    public partial class Form1 : Form,IReceiveMsg
     {
         public Form1()
         {
             InitializeComponent();
         }
+        Form2 form2 = null;
         Thread mainThread;
         private void Form1_Load(object sender, EventArgs e)
         {
+            form2 = new Form2();
+            form2.irev = this;
+            form2.Show();
             mainThread = new Thread(() =>
             {
-               // while (true)
+               while (true)
                 {
 
                     this.Invoke(new Action(()=> { this.timer1.Enabled = true; }));
                     Thread.Sleep(100);
-                    //ShowText(this.richTextBox1, "hahahhahahha\r\n");
                     this.Invoke(new Action<RichTextBox,string>((RichTextBox rtb, string str)=> { rtb.Text += str; }),new object[] { this.richTextBox1,"hahahahha\r\n"});
-                    //TextBox tb = new TextBox();
-                    //tb.Text = "sdsfsdf";
-                    //this.Controls.Add(tb);
                     this.Invoke(new Action(()=> {
                         TextBox tb = new TextBox();
                         tb.Text = "sdsfsdf";
@@ -62,6 +62,17 @@ namespace WindowsFormsApplication1
             this.richTextBox1.SelectionStart = this.richTextBox1.TextLength;
             this.richTextBox1.ScrollToCaret();
             this.timer1.Stop();
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+            string text = this.richTextBox1.Text;
+            form2.ShowText(text);
+        }
+
+        public void Recieve(string text)
+        {
+            this.richTextBox2.Text = text;
         }
     }
 }
